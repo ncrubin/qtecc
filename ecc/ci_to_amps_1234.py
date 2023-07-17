@@ -1,8 +1,10 @@
-# cluster amplitudes from ci coefficients
+# cluster amplitudes from/to ci coefficients
 # c_i = <i| exp(t) | 0> = t_i + ...
 # t_i = c_i - <i| exp(t)> + t_i
 
 import pdaggerq
+
+from pdaggerq.parser import contracted_strings_to_tensor_terms
 
 def main():
 
@@ -56,8 +58,11 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
+    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
-        print(my_term)
+        print("# ", my_term)
+        print(my_term.einsum_string(update_val='singles', output_variables=('a', 'i')))
+        print()
 
     pq.clear()
 
@@ -78,8 +83,12 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
+    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
-        print(my_term)
+        print("# ", my_term)
+        print(my_term.einsum_string(update_val='doubles',
+                                    output_variables=('a', 'b', 'i', 'j')))
+        print()
 
     pq.clear()
 
@@ -100,8 +109,12 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
+    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
-        print(my_term)
+        print("# ", my_term)
+        print(my_term.einsum_string(update_val='triples',
+                                    output_variables=('a', 'b', 'c', 'i', 'j', 'k')))
+        print()
 
     pq.clear()
 
@@ -122,8 +135,13 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
+    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
-        print(my_term)
+        print("# ", my_term)
+        print(my_term.einsum_string(update_val='quadruples',
+                                    output_variables=('a', 'b', 'c', 'd', 'i', 'j', 'k', 'l')))
+        print()
+
 
     pq.clear()
 
