@@ -2,7 +2,12 @@
 # c_i = <i| exp(t) | 0> = t_i + ...
 # t_i = c_i - <i| exp(t)> + t_i
 
+from contextlib import redirect_stdout
+import io
+
 import pdaggerq
+from pdaggerq.parser import contracted_strings_to_tensor_terms
+
 
 from pdaggerq.parser import contracted_strings_to_tensor_terms
 
@@ -58,12 +63,22 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
-    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
-        print("# ", my_term)
-        print(my_term.einsum_string(update_val='singles', output_variables=('a', 'i')))
-        print()
+        print(my_term)
 
+    einsum_output = io.StringIO()
+    t1 = contracted_strings_to_tensor_terms(terms)
+    with redirect_stdout(einsum_output) as f:
+        print('def ci_to_cc(r1, r2, r3, r4):')
+        print('')
+        # print('')
+        for my_term in t1:
+            print("#\t", my_term)
+            print("%s" % (my_term.einsum_string(update_val='t1',
+                                                # output_variables=('i', 'a'),
+                                                )))
+            print()
+    
     pq.clear()
 
     print('')
@@ -83,12 +98,17 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
-    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
-        print("# ", my_term)
-        print(my_term.einsum_string(update_val='doubles',
-                                    output_variables=('a', 'b', 'i', 'j')))
-        print()
+        print(my_term)
+
+    t2 = contracted_strings_to_tensor_terms(terms)
+    with redirect_stdout(einsum_output) as f:
+        for my_term in t2:
+            print("#\t", my_term)
+            print("%s" % (my_term.einsum_string(update_val='t2',
+                                                output_variables=('a', 'b', 'i', 'j'),
+                                                )))
+            print()
 
     pq.clear()
 
@@ -109,12 +129,17 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
-    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
         print("# ", my_term)
-        print(my_term.einsum_string(update_val='triples',
-                                    output_variables=('a', 'b', 'c', 'i', 'j', 'k')))
-        print()
+
+    t3 = contracted_strings_to_tensor_terms(terms)
+    with redirect_stdout(einsum_output) as f:
+        for my_term in t3:
+            print("#\t", my_term)
+            print("%s" % (my_term.einsum_string(update_val='t3',
+                                                output_variables=('a', 'b', 'c', 'i', 'j', 'k')
+                                                )))
+            print()
 
     pq.clear()
 
@@ -135,14 +160,20 @@ def main():
 
     # grab list of fully-contracted strings, then print
     terms = pq.fully_contracted_strings()
-    terms = contracted_strings_to_tensor_terms(terms)
     for my_term in terms:
-        print("# ", my_term)
-        print(my_term.einsum_string(update_val='quadruples',
-                                    output_variables=('a', 'b', 'c', 'd', 'i', 'j', 'k', 'l')))
-        print()
+        print(my_term)
 
+    t4 = contracted_strings_to_tensor_terms(terms)
+    with redirect_stdout(einsum_output) as f:
+        for my_term in t4:
+            print("#\t", my_term)
+            print("%s" % (my_term.einsum_string(update_val='t4',
+                                                output_variables=('a', 'b', 'c', 'd', 'i', 'j', 'k', 'l'),
+                                                )))
+            print()
 
+    with open("ci_to_cc.py", "w") as outf:
+        outf.write(einsum_output.getvalue())
     pq.clear()
 
 if __name__ == "__main__":
