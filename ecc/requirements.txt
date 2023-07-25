@@ -1,1 +1,0 @@
-pdaggerq @ git+https://github.com/edeprince3/pdaggerq.git/repo@master
